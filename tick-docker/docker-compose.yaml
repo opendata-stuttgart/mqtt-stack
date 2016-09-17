@@ -1,0 +1,41 @@
+version: '2'
+services:
+    influxdb:
+        image: influxdb
+        container_name: influxdb
+        #ports:
+            #- "8083:8083"
+            #- "8086:8086"
+        volumes:
+            - /var/lib/influxdb/
+    telegraf:
+        image: telegraf
+        container_name: telegraf
+        privileged: true
+        volumes:
+            - /var/run:/var/run
+            #- ./telegraf/mqtt2influx.conf:/etc/telegraf/telegraf.conf:ro
+            - ./telegraf/devlocal.conf:/etc/telegraf/telegraf.conf:ro
+        links:
+            - influxdb
+    chronograf:
+        image: chronograf
+        container_name: chronograf
+        ports:
+            - "10001:10000"
+        links:
+            - influxdb
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        ports:
+            - "13000:3000"
+        links:
+            - influxdb
+    mosquitto:
+        image: mosquitto
+        volumes:
+            - ./mosquitto/:/etc/mosquitto/:ro
+        ports:
+            - "11883:1883"
+            
