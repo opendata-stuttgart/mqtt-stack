@@ -16,6 +16,17 @@ Prerequisites:
         aptitude update
         aptitude install influxdb telegraf chronograf
 
+## InfluxDB
+
+
+Continous queries should be created before inserting data, since the queries are run only on new data
+
+    -- hourly means as new measurement
+    CREATE CONTINUOUS QUERY p10_hourly ON csv2influx RESAMPLE EVERY 1h BEGIN SELECT mean(P10)  INTO P10_mean_1h FROM csv2influx GROUP BY time(1h), sensor_id END
+    -- hourly means into another retention policy
+    CREATE CONTINUOUS QUERY p10_hourly ON csv2influx RESAMPLE EVERY 1h BEGIN SELECT mean(P10)  INTO csv2influx."".P10_mean_1h FROM csv2influx GROUP BY time(1h),sensor_id END
+    CREATE CONTINUOUS QUERY t_mean ON tm2i BEGIN SELECT mean(temperature) INTO t_mean_1h FROM temperature GROUP BY time(1h) END
+
 
 ## Telegraf
 
